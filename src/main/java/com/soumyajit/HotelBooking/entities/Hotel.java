@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -40,9 +41,10 @@ public class Hotel {
     @Embedded
     private HotelContactInfo hotelContactInfo;
 
-//    @OneToMany
-//    @JsonIgnore
-//    private Room room;
+    @OneToMany(mappedBy = "hotel",fetch = FetchType.LAZY)
+    @JsonIgnore
+    //@ElementCollection(fetch = FetchType.LAZY)
+    private List<Room> room;
 
     @Column(nullable = false)
     private Boolean isActive;

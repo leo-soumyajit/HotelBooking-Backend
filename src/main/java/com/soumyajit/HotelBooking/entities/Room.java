@@ -9,7 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Scanner;
-
+@Entity
 @Getter
 @Setter
 public class Room {
