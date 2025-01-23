@@ -49,4 +49,7 @@ public class Hotel {
     @Column(nullable = false)
     private Boolean isActive;
 
+    @ManyToOne
+    private User owner;
+
 }
