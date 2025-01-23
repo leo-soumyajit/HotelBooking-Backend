@@ -41,6 +41,11 @@ public class HotelController {
         return ResponseEntity.ok(hotelService.deleteHotelById(hotelId));
     }
 
+    @PatchMapping("/{hotelId}")
+    public ResponseEntity<Void> activateHotel(@PathVariable Long hotelId){ // just for updating isActive not for all the fields
+        hotelService.activateHotel(hotelId);
+        return ResponseEntity.ok().build();
+    }
 
 
 

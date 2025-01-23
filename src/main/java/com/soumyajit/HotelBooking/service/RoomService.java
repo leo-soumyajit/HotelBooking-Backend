@@ -1,4 +1,5 @@
 package com.soumyajit.HotelBooking.service;
 
-public class RoomService {
+public interface RoomService {
+
 }
