@@ -27,8 +27,8 @@ public class GlobalExceptionHandler {
     }
 
 
-    @ExceptionHandler(HttpServerErrorException.InternalServerError.class)
-    public ResponseEntity<ApiResponse<?>> InternalServererror(HttpServerErrorException.InternalServerError e){
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<?>> InternalServererror(Exception e){
         ApiError apiError = ApiError
                 .builder().status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .message(e.getMessage()).build();

@@ -2,18 +2,19 @@ package com.soumyajit.HotelBooking.service;
 
 import com.soumyajit.HotelBooking.Exception.ResourceNotFound;
 import com.soumyajit.HotelBooking.dtos.HotelDTOS;
+import com.soumyajit.HotelBooking.dtos.HotelInfoDTOS;
+import com.soumyajit.HotelBooking.dtos.RoomDTOS;
 import com.soumyajit.HotelBooking.entities.Hotel;
 import com.soumyajit.HotelBooking.entities.Room;
 import com.soumyajit.HotelBooking.repository.HotelRepository;
-import lombok.AllArgsConstructor;
+import com.soumyajit.HotelBooking.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +24,7 @@ public class HotelServiceImpl implements HotelService {
     private final HotelRepository hotelRepository;
     private final ModelMapper modelMapper;
     private final InventoryService inventoryService;
+    private final RoomRepository roomRepository;
 
     @Override
     public HotelDTOS createNewHotel(HotelDTOS hotelDTOS) {
@@ -71,10 +73,12 @@ public class HotelServiceImpl implements HotelService {
         log.info("Deleting Hotel with this : {}",hotelId);
         Hotel hotel = hotelRepository.findById(hotelId)
                 .orElseThrow(()->new ResourceNotFound("Hotel not found with ID :"+hotelId));
-        hotelRepository.deleteById(hotelId);
+
         for(Room room : hotel.getRoom()){
-            inventoryService.deleteFutureInventories(room);
+            inventoryService.deleteAllInventories(room);
+            roomRepository.deleteById(room.getId());
         }
+        hotelRepository.deleteById(hotelId);
         return true;
     }
 
@@ -95,6 +99,18 @@ public class HotelServiceImpl implements HotelService {
         }
         // assuming only do it once
 
+    }
+
+    @Override
+    public HotelInfoDTOS getHotelInfoById(Long hotelId) {
+        log.info("Getting the hotel information with ID: {}", hotelId);
+        Hotel hotel = hotelRepository
+                .findById(hotelId)
+                .orElseThrow(() -> new ResourceNotFound("Hotel not found with ID: "+hotelId));
+        List<RoomDTOS> roomDTOS = hotel.getRoom().stream().map(room ->
+                modelMapper.map(room, RoomDTOS.class))
+                .toList();
+        return new HotelInfoDTOS(modelMapper.map(hotel, HotelDTOS.class),roomDTOS);
     }
 
 }

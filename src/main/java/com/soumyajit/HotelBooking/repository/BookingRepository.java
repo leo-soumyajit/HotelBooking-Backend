@@ -1,10 +1,10 @@
 package com.soumyajit.HotelBooking.repository;
 
-import com.soumyajit.HotelBooking.dtos.HotelInfoDTOS;
-import com.soumyajit.HotelBooking.entities.Hotel;
+import com.soumyajit.HotelBooking.entities.Booking;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface HotelRepository extends JpaRepository<Hotel,Long> {
+public interface BookingRepository extends JpaRepository<Booking,Long> {
+
 }
