@@ -1,22 +1,25 @@
 package com.soumyajit.HotelBooking.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
-@Table(uniqueConstraints =
-@UniqueConstraint(
-        name = "unique_hotel_room_date",
-        columnNames = {"hotel_id","room_id","date"}
-))
+@Table(
+        uniqueConstraints = @UniqueConstraint(
+                name = "unique_hotel_room_date",
+                columnNames = {"hotel_id", "room_id", "date"}
+        ))
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Inventory {
 
     @Id
@@ -31,9 +34,8 @@ public class Inventory {
     @JoinColumn(name = "room_id",nullable = false)
     private Room room;
 
-    @CreationTimestamp
     @Column(updatable = false)
-    private LocalDateTime date;
+    private LocalDate date;
 
     @Column(nullable = false , columnDefinition = "INTEGER DEFAULT 0")
     private Integer bookedCount;

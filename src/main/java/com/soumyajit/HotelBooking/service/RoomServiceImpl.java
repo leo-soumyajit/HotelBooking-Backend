@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,10 +23,11 @@ public class RoomServiceImpl implements RoomService{
     private final ModelMapper modelMapper;
     private final RoomRepository roomRepository;
     private final HotelRepository hotelRepository;
-
+    private final InventoryService inventoryService;
 
 
     @Override
+    @org.springframework.transaction.annotation.Transactional
     public RoomDTOS createNewRoom(Long hotelId , RoomDTOS roomDTOS) {
         log.info("Creating new room in Hotel with Id {}",hotelId);
         Hotel hotel = hotelRepository.findById(hotelId)
@@ -33,7 +35,10 @@ public class RoomServiceImpl implements RoomService{
         Room room = modelMapper.map(roomDTOS,Room.class);
         room.setHotel(hotel);
         room = roomRepository.save(room);
-        //TODO : create Inventory as soon as room is created and Hotel is Active
+        if(hotel.getIsActive()){    //initialize room when hotel getActivate
+            inventoryService.initializeRoomForAYear(room);
+        }
+
         return modelMapper.map(room,RoomDTOS.class);
     }
 
@@ -58,16 +63,14 @@ public class RoomServiceImpl implements RoomService{
 
 
     @Override
+    @Transactional
     public boolean deleteRoomById(Long roomId) {
         log.info("Deleting the room with Id {}",roomId);
-        if (isExists(roomId)) {
-            roomRepository.deleteById(roomId);
-            //TODO : deleted all future Inventory
-            return true;
-        }
-        else{
-            throw new ResourceNotFound("Room with this Id "+roomId);
-        }
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(()->new ResourceNotFound("Room not found with ID :"+roomId));
+        inventoryService.deleteFutureInventories(room);
+        roomRepository.deleteById(roomId);
+        return true;
     }
 
 
