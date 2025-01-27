@@ -49,12 +49,15 @@ public class InventoryServiceImpl implements InventoryService{
 
     @Override
     public void deleteAllInventories(Room room) {
+        log.info("Deleting inventories of the room with id {} ",room.getId());
         LocalDate today = LocalDate.now();
         inventoryRepository.deleteByRoom(room);
     }
 
     @Override
     public Page<HotelDTOS> searchHotels(HotelSearchRequest hotelSearchRequest) {
+        log.info("Searching Hotels for {} city,from {} to {}",
+                hotelSearchRequest.getCity(),hotelSearchRequest.getStartDate(),hotelSearchRequest.getEndDate());
         Pageable pageable = PageRequest
                 .of(hotelSearchRequest.getPage() , hotelSearchRequest.getSize());
         long dateCount = ChronoUnit.DAYS
