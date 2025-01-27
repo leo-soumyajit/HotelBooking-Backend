@@ -2,17 +2,21 @@ package com.soumyajit.HotelBooking.entities;
 
 import com.soumyajit.HotelBooking.entities.Enums.BookingStatus;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
 @Getter
 @Setter
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,11 +45,13 @@ public class Booking {
     private Integer roomsCount;
 
     @Column(nullable = false)
-    private LocalDateTime checkedInDate;
+    private LocalDate checkedInDate;
 
     @Column(nullable = false)
-    private LocalDateTime checkedOutDate;
+    private LocalDate checkedOutDate;
 
+    @Column(nullable = false,precision = 10,scale = 2)
+    private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
     private BookingStatus bookingStatus;

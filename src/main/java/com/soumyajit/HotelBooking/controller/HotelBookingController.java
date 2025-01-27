@@ -17,7 +17,7 @@ public class HotelBookingController {
 
     private final BookingService bookingService;
 
-    @PostMapping()
+    @PostMapping("/init")
     public ResponseEntity<BookingDTOS> initialiseBooking(@RequestBody BookingRequest bookingRequest){
         return ResponseEntity.ok(bookingService.initialiseBooking(bookingRequest));
     }

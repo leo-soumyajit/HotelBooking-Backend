@@ -42,6 +42,7 @@ public class InventoryServiceImpl implements InventoryService{
                     .surgeFactor(BigDecimal.ONE)
                     .totalCount(room.getTotalCount())
                     .closed(false)
+                    .reservedCount(0)
                     .build();
             inventoryRepository.save(inventory);
         }
@@ -58,6 +59,7 @@ public class InventoryServiceImpl implements InventoryService{
     public Page<HotelDTOS> searchHotels(HotelSearchRequest hotelSearchRequest) {
         log.info("Searching Hotels for {} city,from {} to {}",
                 hotelSearchRequest.getCity(),hotelSearchRequest.getStartDate(),hotelSearchRequest.getEndDate());
+
         Pageable pageable = PageRequest
                 .of(hotelSearchRequest.getPage() , hotelSearchRequest.getSize());
         long dateCount = ChronoUnit.DAYS

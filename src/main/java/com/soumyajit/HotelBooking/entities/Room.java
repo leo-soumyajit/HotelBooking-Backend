@@ -46,11 +46,4 @@ public class Room {
     @Column(nullable = false)
     private Integer capacity;
 
-
-
-
-
-
-
-
 }
