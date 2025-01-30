@@ -3,12 +3,10 @@ package com.soumyajit.HotelBooking.service;
 import com.soumyajit.HotelBooking.Exception.ResourceNotFound;
 import com.soumyajit.HotelBooking.dtos.BookingDTOS;
 import com.soumyajit.HotelBooking.dtos.BookingRequest;
+import com.soumyajit.HotelBooking.dtos.GuestDTOS;
 import com.soumyajit.HotelBooking.entities.*;
 import com.soumyajit.HotelBooking.entities.Enums.BookingStatus;
-import com.soumyajit.HotelBooking.repository.BookingRepository;
-import com.soumyajit.HotelBooking.repository.HotelRepository;
-import com.soumyajit.HotelBooking.repository.InventoryRepository;
-import com.soumyajit.HotelBooking.repository.RoomRepository;
+import com.soumyajit.HotelBooking.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -16,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -24,6 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class BookingServiceImpl implements BookingService{
+    private final GuestRepository guestRepository;
 
     private final BookingRepository bookingRepository;
     private final HotelRepository hotelRepository;
@@ -62,9 +63,7 @@ public class BookingServiceImpl implements BookingService{
 
         //create the Booking
 
-        User user = new User();
-        user.setId(1L); // TODO Remove this Dummy User
-        //TODO Calculate Dynamic Price
+
 
 
         Booking booking = Booking.builder()
@@ -74,7 +73,7 @@ public class BookingServiceImpl implements BookingService{
                 .roomsCount(bookingRequest.getRoomsCount())
                 .hotel(hotel)
                 .room(room)
-                .user(user)
+                .user(getCurrentUser())
                 .amount(BigDecimal.TEN)
                 //.guest() //TODO Guests will be added later
                 .build();
@@ -82,4 +81,38 @@ public class BookingServiceImpl implements BookingService{
         booking = bookingRepository.save(booking);
         return modelMapper.map(booking, BookingDTOS.class);
     }
+
+    @Override
+    @Transactional
+    public BookingDTOS addGuests(Long bookingId, List<GuestDTOS> guestDTOSList) {
+        log.info("Adding Guests for Booking with Id {} ",bookingId);
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(()->new ResourceNotFound("Booking not found with id "+bookingId));
+        if(hasBookingExpired(booking)){
+            throw new IllegalStateException("Booking has already expired");
+        }
+
+        if(booking.getBookingStatus() != BookingStatus.RESERVED){
+            throw new IllegalStateException("Booking is not under reserved state , cannot add guests");
+        }
+        for(GuestDTOS guestDTOS : guestDTOSList){
+            Guest guest = modelMapper.map(guestDTOS, Guest.class);
+            guest.setUser(getCurrentUser());
+            guest = guestRepository.save(guest);
+            booking.getGuest().add(guest);
+        }
+        booking.setBookingStatus(BookingStatus.GUESTS_ADDED);
+        return modelMapper.map(bookingRepository.save(booking), BookingDTOS.class);
+    }
+    private boolean hasBookingExpired(Booking booking){
+        return booking.getCreatedAt().plusMinutes(10).isBefore(LocalDateTime.now());
+    }
+
+    private User getCurrentUser(){
+        User user = new User();
+        user.setId(1L); // TODO Remove this Dummy User
+        //TODO Calculate Dynamic Price
+        return user;
+    }
+
 }
