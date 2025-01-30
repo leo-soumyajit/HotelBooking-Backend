@@ -26,7 +26,6 @@ public class HotelBookingController {
     public ResponseEntity<BookingDTOS> addGuests(@PathVariable Long bookingId ,
                                                  @RequestBody List<GuestDTOS> guestDTOSList){
         return ResponseEntity.ok(bookingService.addGuests(bookingId,guestDTOSList));
-
     }
 
 }

@@ -63,9 +63,6 @@ public class BookingServiceImpl implements BookingService{
 
         //create the Booking
 
-
-
-
         Booking booking = Booking.builder()
                 .bookingStatus(BookingStatus.RESERVED)
                 .checkedInDate(bookingRequest.getCheckInDate())
