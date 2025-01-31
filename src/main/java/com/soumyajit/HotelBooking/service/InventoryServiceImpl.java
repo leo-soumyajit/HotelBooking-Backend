@@ -1,10 +1,12 @@
 package com.soumyajit.HotelBooking.service;
 
 import com.soumyajit.HotelBooking.dtos.HotelDTOS;
+import com.soumyajit.HotelBooking.dtos.HotelPriceDTO;
 import com.soumyajit.HotelBooking.dtos.HotelSearchRequest;
 import com.soumyajit.HotelBooking.entities.Hotel;
 import com.soumyajit.HotelBooking.entities.Inventory;
 import com.soumyajit.HotelBooking.entities.Room;
+import com.soumyajit.HotelBooking.repository.HotelMinPriceRepository;
 import com.soumyajit.HotelBooking.repository.InventoryRepository;
 import com.soumyajit.HotelBooking.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,7 @@ public class InventoryServiceImpl implements InventoryService{
     private final RoomRepository roomRepository;
     private final ModelMapper modelMapper;
     private final InventoryRepository inventoryRepository;
+    private final HotelMinPriceRepository hotelMinPriceRepository;
 
     @Override
     public void initializeRoomForAYear(Room room) {
@@ -56,7 +59,7 @@ public class InventoryServiceImpl implements InventoryService{
     }
 
     @Override
-    public Page<HotelDTOS> searchHotels(HotelSearchRequest hotelSearchRequest) {
+    public Page<HotelPriceDTO> searchHotels(HotelSearchRequest hotelSearchRequest) {
         log.info("Searching Hotels for {} city,from {} to {}",
                 hotelSearchRequest.getCity(),hotelSearchRequest.getStartDate(),hotelSearchRequest.getEndDate());
 
@@ -65,11 +68,11 @@ public class InventoryServiceImpl implements InventoryService{
         long dateCount = ChronoUnit.DAYS
                 .between(hotelSearchRequest.getStartDate(),hotelSearchRequest.getEndDate())+1;
         log.info("Getting info by page form");
-        Page<Hotel> hotelPage = inventoryRepository
+        Page<HotelPriceDTO> hotelPage = hotelMinPriceRepository
                 .findHotelsWithAvailableInventory(hotelSearchRequest.getCity()
                         , hotelSearchRequest.getStartDate(),hotelSearchRequest.getEndDate(),
                         hotelSearchRequest.getRoomsCount(),dateCount,pageable
                 );
-        return hotelPage.map(hotel -> modelMapper.map(hotel, HotelDTOS.class));
+        return hotelPage;
     }
 }
