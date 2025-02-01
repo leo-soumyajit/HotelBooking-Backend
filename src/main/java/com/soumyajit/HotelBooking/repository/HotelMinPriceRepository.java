@@ -10,13 +10,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 public interface HotelMinPriceRepository extends JpaRepository<HotelMinPrice,Long> {
 
 
 
     @Query("""
-            SELECT com.soumyajit.HotelBooking.dtos.HotelPriceDTO(i.hotel , AVG(i.price))
+            SELECT new com.soumyajit.HotelBooking.dtos.HotelPriceDTO(i.hotel , AVG(i.price))
             FROM  HotelMinPrice i
             WHERE i.hotel.city = :city
                 AND i.date BETWEEN :startDate AND :endDate
@@ -33,4 +34,5 @@ public interface HotelMinPriceRepository extends JpaRepository<HotelMinPrice,Lon
                     Pageable pageable
             );
 
+    Optional<HotelMinPrice> findByHotelAndDate(Hotel hotel, LocalDate date);
 }

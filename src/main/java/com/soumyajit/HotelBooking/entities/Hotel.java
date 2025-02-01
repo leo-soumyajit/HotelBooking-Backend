@@ -43,6 +43,7 @@ public class Hotel {
 
     @OneToMany(mappedBy = "hotel",fetch = FetchType.LAZY)
     //@ElementCollection(fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Room> room;
 
     @Column(nullable = false)
