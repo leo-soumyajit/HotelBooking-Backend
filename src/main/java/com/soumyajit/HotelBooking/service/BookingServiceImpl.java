@@ -1,6 +1,7 @@
 package com.soumyajit.HotelBooking.service;
 
 import com.soumyajit.HotelBooking.Exception.ResourceNotFound;
+import com.soumyajit.HotelBooking.Exception.UnAuthorizedException;
 import com.soumyajit.HotelBooking.dtos.BookingDTOS;
 import com.soumyajit.HotelBooking.dtos.BookingRequest;
 import com.soumyajit.HotelBooking.dtos.GuestDTOS;
@@ -10,6 +11,7 @@ import com.soumyajit.HotelBooking.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,6 +64,7 @@ public class BookingServiceImpl implements BookingService{
         inventoryRepository.saveAll(inventoryList);
 
         //create the Booking
+        //TODO Calculate Dynamic Price
 
         Booking booking = Booking.builder()
                 .bookingStatus(BookingStatus.RESERVED)
@@ -85,6 +88,14 @@ public class BookingServiceImpl implements BookingService{
         log.info("Adding Guests for Booking with Id {} ",bookingId);
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(()->new ResourceNotFound("Booking not found with id "+bookingId));
+
+        User user = getCurrentUser(); //get Authenticated user
+
+        if(!user.equals(booking.getUser())){  // if the user isn't the Authenticated user or doesn't won the booking
+            throw new UnAuthorizedException("Booking doesn't belong to this user with id: "+user.getId()   );
+        }
+
+
         if(hasBookingExpired(booking)){
             throw new IllegalStateException("Booking has already expired");
         }
@@ -94,7 +105,7 @@ public class BookingServiceImpl implements BookingService{
         }
         for(GuestDTOS guestDTOS : guestDTOSList){
             Guest guest = modelMapper.map(guestDTOS, Guest.class);
-            guest.setUser(getCurrentUser());
+            guest.setUser(user); //set the Authenticated User
             guest = guestRepository.save(guest);
             booking.getGuest().add(guest);
         }
@@ -105,11 +116,10 @@ public class BookingServiceImpl implements BookingService{
         return booking.getCreatedAt().plusMinutes(10).isBefore(LocalDateTime.now());
     }
 
+
+    //get Authenticated User
     private User getCurrentUser(){
-        User user = new User();
-        user.setId(1L); // TODO Remove this Dummy User
-        //TODO Calculate Dynamic Price
-        return user;
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal(); //this way we can get the authenticated user everyTime
     }
 
 }

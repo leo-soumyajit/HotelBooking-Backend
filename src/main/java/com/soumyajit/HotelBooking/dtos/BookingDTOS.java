@@ -25,6 +25,7 @@ public class BookingDTOS {
 //
 //    private Room room;
 
+    @JsonIgnore
     private User user;
 
     private LocalDateTime createdAt;

@@ -49,7 +49,7 @@ public class Hotel {
     @Column(nullable = false)
     private Boolean isActive;
 
-    @ManyToOne
+    @ManyToOne(optional = false,fetch = FetchType.LAZY)
     private User owner;
 
 }

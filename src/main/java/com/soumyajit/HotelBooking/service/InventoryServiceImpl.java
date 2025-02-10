@@ -1,9 +1,7 @@
 package com.soumyajit.HotelBooking.service;
 
-import com.soumyajit.HotelBooking.dtos.HotelDTOS;
 import com.soumyajit.HotelBooking.dtos.HotelPriceDTO;
 import com.soumyajit.HotelBooking.dtos.HotelSearchRequest;
-import com.soumyajit.HotelBooking.entities.Hotel;
 import com.soumyajit.HotelBooking.entities.Inventory;
 import com.soumyajit.HotelBooking.entities.Room;
 import com.soumyajit.HotelBooking.repository.HotelMinPriceRepository;
