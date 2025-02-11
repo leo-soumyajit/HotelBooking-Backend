@@ -10,12 +10,11 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    public void sendPasswordResetEmail(String to, String token) {
+    public void sendPasswordResetEmail(String to, String code) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject("Password Reset Request");
-        message.setText("To reset your password, please use the following token: " + token);
+        message.setText("To reset your password, please use the following code: " + code);
         mailSender.send(message);
     }
 }
-

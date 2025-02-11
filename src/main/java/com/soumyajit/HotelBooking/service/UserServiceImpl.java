@@ -35,9 +35,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByEmail(username)
-                .orElseThrow(()->new AuthenticationException("Resource isn't matched") {
+        User user= userRepository.findByEmail(username)
+                .orElseThrow(()->new UsernameNotFoundException("Resource isn't matched") {
                 });
+        return user;
     }
 
 

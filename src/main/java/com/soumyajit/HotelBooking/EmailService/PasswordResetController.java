@@ -31,7 +31,7 @@ public class PasswordResetController {
         Optional<User> user = userService.findByEmail(email);
         ApiResponse<String> response = new ApiResponse<>();
         if (user.isPresent()) {
-            String token = tokenService.createToken(email);
+            String token = tokenService.createResetCode(email);
             emailService.sendPasswordResetEmail(email, token);
             response.setData("Password reset email sent");
             return ResponseEntity.ok(response);
@@ -44,13 +44,13 @@ public class PasswordResetController {
 
     @PostMapping("/reset")
     public ResponseEntity<ApiResponse<String>> resetPassword(@RequestParam String token, @RequestParam String newPassword) {
-        Optional<String> email = tokenService.getEmailByToken(token);
+        Optional<String> email = tokenService.getEmailByCode(token);
         ApiResponse<String> response = new ApiResponse<>();
         if (email.isPresent()) {
             Optional<User> user = userService.findByEmail(email.get());
             if (user.isPresent()) {
                 userService.updateUserPassword(user.get(), newPassword); // Password encoded in service
-                tokenService.invalidateToken(token);
+                tokenService.invalidateCode(token);
                 response.setData("Password reset successful");
                 return ResponseEntity.ok(response);
             } else {
