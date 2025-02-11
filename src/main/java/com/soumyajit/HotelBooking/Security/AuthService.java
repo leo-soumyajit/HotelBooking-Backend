@@ -1,5 +1,6 @@
 package com.soumyajit.HotelBooking.Security;
 
+import com.soumyajit.HotelBooking.EmailService.EmailService;
 import com.soumyajit.HotelBooking.Exception.ResourceNotFound;
 import com.soumyajit.HotelBooking.dtos.LoginDTOS;
 import com.soumyajit.HotelBooking.dtos.SignUpRequestDTOS;
@@ -7,10 +8,8 @@ import com.soumyajit.HotelBooking.dtos.UserDTOS;
 import com.soumyajit.HotelBooking.entities.Enums.Roles;
 import com.soumyajit.HotelBooking.entities.User;
 import com.soumyajit.HotelBooking.repository.UserRepository;
-import com.soumyajit.HotelBooking.service.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,18 +28,35 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
+    private final EmailService emailService;
+    private final com.soumyajit.HotelBooking.Security.OTPServiceAndValidation.OtpService otpService;
 
-    public UserDTOS signUp(SignUpRequestDTOS signUpRequestDTOS){  // signUp method for user
+
+
+    //signup function with otp validation
+
+    public UserDTOS signUp(SignUpRequestDTOS signUpRequestDTOS) {
         Optional<User> user = userRepository.findByEmail(signUpRequestDTOS.getEmail());
-        if(user.isPresent()){
+        if (user.isPresent()) {
             throw new BadCredentialsException("User with this Email is already present");
         }
-        User newUser = modelMapper.map(signUpRequestDTOS,User.class);
-        newUser.setRoles(Set.of(Roles.GUEST)); // by default all user are guests
-        newUser.setPassword(passwordEncoder.encode(signUpRequestDTOS.getPassword())); // bcrypt the pass
+
+        // Check if OTP was verified
+        if (!otpService.isOTPVerified(signUpRequestDTOS.getEmail())) {
+            throw new BadCredentialsException("OTP not verified");
+        }
+
+        User newUser = modelMapper.map(signUpRequestDTOS, User.class);
+        newUser.setRoles(Set.of(Roles.GUEST)); // by default all users are guests
+        newUser.setPassword(passwordEncoder.encode(signUpRequestDTOS.getPassword())); // bcrypt the password
         User savedUser = userRepository.save(newUser); // save the user
+
+        // Clear OTP verification status after successful signup
+        otpService.clearOTPVerified(signUpRequestDTOS.getEmail());
+
         return modelMapper.map(savedUser, UserDTOS.class);
     }
+
 
 
     public String[] login(LoginDTOS loginDTOS){
@@ -65,5 +81,22 @@ public class AuthService {
 
 
     }
+
+
+
+
+
+//        public UserDTOS signUp(SignUpRequestDTOS signUpRequestDTOS){  // signUp method for user normal no otp validation
+//        Optional<User> user = userRepository.findByEmail(signUpRequestDTOS.getEmail());
+//        if(user.isPresent()){
+//            throw new BadCredentialsException("User with this Email is already present");
+//        }
+//        User newUser = modelMapper.map(signUpRequestDTOS,User.class);
+//        newUser.setRoles(Set.of(Roles.GUEST)); // by default all user are guests
+//        newUser.setPassword(passwordEncoder.encode(signUpRequestDTOS.getPassword())); // bcrypt the pass
+//        User savedUser = userRepository.save(newUser); // save the user
+//        return modelMapper.map(savedUser, UserDTOS.class);
+//    }
+
 
 }
