@@ -3,13 +3,11 @@ package com.soumyajit.HotelBooking.dtos;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.soumyajit.HotelBooking.entities.*;
 import com.soumyajit.HotelBooking.entities.Enums.BookingStatus;
-import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -42,7 +40,7 @@ public class BookingDTOS {
 
     private Set<GuestDTOS> guest;
 
-
+    private BigDecimal amount;
 
 
 

@@ -2,6 +2,7 @@ package com.soumyajit.HotelBooking.service;
 
 import com.soumyajit.HotelBooking.Exception.ResourceNotFound;
 import com.soumyajit.HotelBooking.Exception.UnAuthorizedException;
+import com.soumyajit.HotelBooking.Strategy.PricingService;
 import com.soumyajit.HotelBooking.dtos.BookingDTOS;
 import com.soumyajit.HotelBooking.dtos.BookingRequest;
 import com.soumyajit.HotelBooking.dtos.GuestDTOS;
@@ -41,6 +42,7 @@ public class BookingServiceImpl implements BookingService{
     private final InventoryRepository inventoryRepository;
     private final ModelMapper modelMapper;
     private final CheckOutService checkOutService;
+    private final PricingService pricingService;
 
     @Value("${frontend.url}")
     private String frontendUrl;
@@ -69,13 +71,15 @@ public class BookingServiceImpl implements BookingService{
 
         // Reverse the room / update the booked count of inventories
 
-        for(Inventory inventory : inventoryList){
-            inventory.setReservedCount(inventory.getReservedCount() + bookingRequest.getRoomsCount());
-        }
-        inventoryRepository.saveAll(inventoryList);
+        inventoryRepository.initBooking(room.getId(),
+                bookingRequest.getCheckInDate(),
+                bookingRequest.getCheckOutDate(),
+                bookingRequest.getRoomsCount());
 
         //create the Booking
-        //TODO Calculate Dynamic Price
+
+        BigDecimal priceForOneRoom = pricingService.calculateTotalPrice(inventoryList);
+        BigDecimal totalPrice = priceForOneRoom.multiply(BigDecimal.valueOf(bookingRequest.getRoomsCount()));
 
         Booking booking = Booking.builder()
                 .bookingStatus(BookingStatus.RESERVED)
@@ -85,7 +89,7 @@ public class BookingServiceImpl implements BookingService{
                 .hotel(hotel)
                 .room(room)
                 .user(getCurrentUser())
-                .amount(BigDecimal.valueOf(50))
+                .amount(totalPrice)
                 //.guest() //TODO Guests will be added later
                 .build();
 
@@ -224,6 +228,19 @@ public class BookingServiceImpl implements BookingService{
         }
     }
 
+    //get booking status
+    @Override
+    public String getBookingStatus(Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(
+                () -> new ResourceNotFound("Booking not found with id: "+bookingId)
+        );
+
+        User user = getCurrentUser();
+        if (!user.getId().equals(booking.getUser().getId())) {
+            throw new UnAuthorizedException("Booking does not belong to this user with id: "+user.getId());
+        }
+        return booking.getBookingStatus().name();
+    }
 
 
     private boolean hasBookingExpired(Booking booking){
