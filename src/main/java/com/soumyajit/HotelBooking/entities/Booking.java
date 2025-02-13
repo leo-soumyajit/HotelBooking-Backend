@@ -30,7 +30,7 @@ public class Booking {
     @JoinColumn(name = "room_id")
     private Room room;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id",nullable = false)
     private User user;
 
@@ -61,5 +61,8 @@ public class Booking {
     joinColumns = @JoinColumn(name = "booking_id")
     ,inverseJoinColumns = @JoinColumn(name = "guest_id"))
     private Set<Guest> guest;
+
+    @Column(name = "transaction_Id",unique = true)
+    private String paymentSessionId;
 
 }

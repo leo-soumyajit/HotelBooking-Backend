@@ -20,7 +20,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(com.soumyajit.HotelBooking.Exception.ResourceNotFound.class)
     public ResponseEntity<ApiResponse<?>> noEmployeeFound(com.soumyajit.HotelBooking.Exception.ResourceNotFound exception){
-        //ApiError apiError = new ApiError(HttpStatus.NOT_FOUND,"Resoure Not Found");
         ApiError apiError = ApiError.builder().status(HttpStatus.NOT_FOUND).message(exception.getMessage()).build();
         return buildErrorResponseEntity(apiError);
     }

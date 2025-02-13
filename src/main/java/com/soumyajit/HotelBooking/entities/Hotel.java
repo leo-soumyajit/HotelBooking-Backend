@@ -1,7 +1,6 @@
 package com.soumyajit.HotelBooking.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -49,7 +48,7 @@ public class Hotel {
     @Column(nullable = false)
     private Boolean isActive;
 
-    @ManyToOne(optional = false,fetch = FetchType.LAZY)
+    @ManyToOne(optional = false)
     private User owner;
 
 }
