@@ -21,4 +21,6 @@ public interface BookingService {
     void cancelPayment(Long bookingId);
 
     String getBookingStatus(Long bookingId);
+
+    List<BookingDTOS> getAllBookings(Long hotelId);
 }

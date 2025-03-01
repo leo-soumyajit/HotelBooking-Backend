@@ -18,6 +18,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.soumyajit.HotelBooking.util.AppUtils.getCurrentUser;
 
 @Service
 @RequiredArgsConstructor
@@ -144,6 +147,18 @@ public class HotelServiceImpl implements HotelService {
                 modelMapper.map(room, RoomDTOS.class))
                 .toList();
         return new HotelInfoDTOS(modelMapper.map(hotel, HotelDTOS.class),roomDTOS);
+    }
+
+    @Override
+    public List<HotelDTOS> getAllHotels() {
+        User user = getCurrentUser();
+        log.info("Getting all hotels for the admin user with Id {}: ",user.getId());
+        List<Hotel> hotel = hotelRepository.findByOwner(user);
+        return hotel.stream()
+                .map(hotel1 -> modelMapper.map(hotel1,HotelDTOS.class))
+                .collect(Collectors.toList());
+
+
     }
 
 }

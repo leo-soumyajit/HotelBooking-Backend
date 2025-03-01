@@ -1,6 +1,8 @@
 package com.soumyajit.HotelBooking.controller;
 
+import com.soumyajit.HotelBooking.dtos.BookingDTOS;
 import com.soumyajit.HotelBooking.dtos.HotelDTOS;
+import com.soumyajit.HotelBooking.service.BookingService;
 import com.soumyajit.HotelBooking.service.HotelService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -13,12 +15,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin/hotels")
 @Slf4j
 public class HotelController {
     private final HotelService hotelService;
+    private final BookingService bookingService;
 
     @PostMapping()
     public ResponseEntity<HotelDTOS> createNewHotel(@RequestBody HotelDTOS hotelDTOS){
@@ -47,6 +52,15 @@ public class HotelController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping
+    public ResponseEntity<List<HotelDTOS>> getAllHotels(){
+        return ResponseEntity.ok(hotelService.getAllHotels());
+    }
+
+    @GetMapping("/{hotelId}/bookings")
+    public ResponseEntity<List<BookingDTOS>> getAllBookings(@PathVariable Long hotelId){
+        return ResponseEntity.ok(bookingService.getAllBookings(hotelId));
+    }
 
 
 

@@ -28,14 +28,17 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.soumyajit.HotelBooking.util.AppUtils.getCurrentUser;
 
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class BookingServiceImpl implements BookingService{
-    private final GuestRepository guestRepository;
 
+    private final GuestRepository guestRepository;
     private final BookingRepository bookingRepository;
     private final HotelRepository hotelRepository;
     private final RoomRepository roomRepository;
@@ -242,6 +245,39 @@ public class BookingServiceImpl implements BookingService{
         return booking.getBookingStatus().name();
     }
 
+    @Override
+    public List<BookingDTOS> getAllBookings(Long hotelId) {
+        Hotel hotel = hotelRepository.findById(hotelId)
+                .orElseThrow(()->new ResourceNotFound("Hotel not found with id "+hotelId));
+
+        log.info("Getting all bookings of the Hotel with Id: {}",hotelId);
+
+        User user = getCurrentUser();
+        if (!user.equals(hotel.getOwner())){
+            throw new UnAuthorizedException("Hotel does not belong to this user with id: "+hotelId);
+        }
+
+        List<Booking> bookings = bookingRepository.findByHotel(hotel);
+
+        return bookings.stream()
+                .map(booking ->
+                    modelMapper.map(booking,BookingDTOS.class))
+                    .collect(Collectors.toList());
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
 
     private boolean hasBookingExpired(Booking booking){
         return booking.getCreatedAt().plusMinutes(10).isBefore(LocalDateTime.now());
@@ -249,8 +285,6 @@ public class BookingServiceImpl implements BookingService{
 
 
     //get Authenticated User
-    private User getCurrentUser(){
-        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal(); //this way we can get the authenticated user everyTime
-    }
+
 
 }
