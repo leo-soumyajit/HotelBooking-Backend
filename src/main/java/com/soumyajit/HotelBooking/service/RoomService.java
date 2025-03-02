@@ -9,4 +9,6 @@ public interface RoomService {
         List<RoomDTOS> getAllRoomsInAHotel(Long hotelId);
         RoomDTOS getRoomById(Long roomId);
         boolean deleteRoomById(Long roomId);
+
+    RoomDTOS updateRoom(Long hotelId, Long roomId, RoomDTOS roomDTOS);
 }

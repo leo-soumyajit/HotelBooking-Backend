@@ -2,6 +2,7 @@ package com.soumyajit.HotelBooking.service;
 
 import com.soumyajit.HotelBooking.Exception.ResourceNotFound;
 import com.soumyajit.HotelBooking.Exception.UnAuthorizedException;
+import com.soumyajit.HotelBooking.dtos.HotelDTOS;
 import com.soumyajit.HotelBooking.dtos.RoomDTOS;
 import com.soumyajit.HotelBooking.entities.Hotel;
 import com.soumyajit.HotelBooking.entities.Room;
@@ -17,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.soumyajit.HotelBooking.util.AppUtils.getCurrentUser;
 
 @Service
 @RequiredArgsConstructor
@@ -93,6 +96,40 @@ public class RoomServiceImpl implements RoomService{
         roomRepository.deleteById(roomId);
         return true;
     }
+
+    @Override
+    public RoomDTOS updateRoom(Long hotelId, Long roomId, RoomDTOS roomDTOS) {
+        log.info("Updating room with this : {}",roomId);
+        Hotel hotel = hotelRepository.findById(hotelId)
+                .orElseThrow(()->new ResourceNotFound("Hotel with this hotelId not found"+hotelId));
+
+        User user = getCurrentUser();
+        if(!user.equals(hotel.getOwner())){     //if the Admin isn't won the hotel if we don't put this any admin can access this and can update this
+            throw new UnAuthorizedException("This user doesn't won this hotel with id: "+hotelId);
+        }
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(()->new ResourceNotFound("Room with this roomId notfound : "+roomId));
+
+        modelMapper.map(roomDTOS,room);
+        room.setId(roomId);
+
+        //TODO : if price or inventory updated , update the inventory for room as well
+
+        room=roomRepository.save(room);
+        return modelMapper.map(room, RoomDTOS.class);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     boolean isHotelExists(Long hotelId){

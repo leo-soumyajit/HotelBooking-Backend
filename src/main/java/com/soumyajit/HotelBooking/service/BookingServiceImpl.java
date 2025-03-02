@@ -6,6 +6,7 @@ import com.soumyajit.HotelBooking.Strategy.PricingService;
 import com.soumyajit.HotelBooking.dtos.BookingDTOS;
 import com.soumyajit.HotelBooking.dtos.BookingRequest;
 import com.soumyajit.HotelBooking.dtos.GuestDTOS;
+import com.soumyajit.HotelBooking.dtos.HotelReportsDTOS;
 import com.soumyajit.HotelBooking.entities.*;
 import com.soumyajit.HotelBooking.entities.Enums.BookingStatus;
 import com.soumyajit.HotelBooking.repository.*;
@@ -24,8 +25,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -269,6 +272,43 @@ public class BookingServiceImpl implements BookingService{
 
 
     }
+
+    @Override
+    public HotelReportsDTOS getHotelReport(Long hotelId, LocalDate startDate, LocalDate endDate) {
+        Hotel hotel = hotelRepository.findById(hotelId)
+                .orElseThrow(()->new ResourceNotFound("Hotel not found with id "+hotelId));
+
+        log.info("Getting all Reports of the Hotel with Id: {}",hotelId);
+
+        User user = getCurrentUser();
+        if (!user.equals(hotel.getOwner())){
+            throw new UnAuthorizedException("Hotel does not belong to this user with id: "+hotelId);
+        }
+
+        LocalDateTime startingTime = startDate.atStartOfDay();
+        LocalDateTime endingTime = endDate.atTime(LocalTime.MAX);
+
+        List<Booking> bookings = bookingRepository.findByHotelAndCreatedAtBetween(hotel,startingTime,endingTime);
+
+        Long totalConfirmedBooking = bookings
+                .stream()
+                .filter(booking -> booking.getBookingStatus()==BookingStatus.CONFIRMED)
+                .count();
+
+        BigDecimal totalRevenueConfirmedBooking = bookings.stream()
+                .filter(booking -> booking.getBookingStatus()==BookingStatus.CONFIRMED)
+                .map(Booking::getAmount)
+                .reduce(BigDecimal.ZERO,BigDecimal::add);
+
+        BigDecimal avgRevenue = totalConfirmedBooking==0 ? BigDecimal.ZERO:
+                totalRevenueConfirmedBooking
+                        .divide(BigDecimal.valueOf(totalConfirmedBooking), RoundingMode.HALF_UP);
+
+        return new HotelReportsDTOS(totalConfirmedBooking,totalRevenueConfirmedBooking,avgRevenue);
+    }
+
+
+
 
 
 

@@ -2,6 +2,7 @@ package com.soumyajit.HotelBooking.controller;
 
 import com.soumyajit.HotelBooking.dtos.BookingDTOS;
 import com.soumyajit.HotelBooking.dtos.HotelDTOS;
+import com.soumyajit.HotelBooking.dtos.HotelReportsDTOS;
 import com.soumyajit.HotelBooking.service.BookingService;
 import com.soumyajit.HotelBooking.service.HotelService;
 import lombok.AllArgsConstructor;
@@ -15,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -60,6 +62,17 @@ public class HotelController {
     @GetMapping("/{hotelId}/bookings")
     public ResponseEntity<List<BookingDTOS>> getAllBookings(@PathVariable Long hotelId){
         return ResponseEntity.ok(bookingService.getAllBookings(hotelId));
+    }
+
+    @GetMapping("/{hotelId}/reports")
+    public ResponseEntity<HotelReportsDTOS> getHotelReport(@PathVariable Long hotelId ,
+                                                           @RequestParam(required = false)LocalDate startDate ,
+                                                           @RequestParam(required = false)LocalDate endDate){
+
+        if(startDate==null)startDate=LocalDate.now().minusMonths(1);
+        if(endDate==null)endDate=LocalDate.now();
+
+        return ResponseEntity.ok(bookingService.getHotelReport(hotelId,startDate,endDate));
     }
 
 
