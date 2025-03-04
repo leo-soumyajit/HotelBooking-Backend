@@ -65,26 +65,4 @@ public class Inventory {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

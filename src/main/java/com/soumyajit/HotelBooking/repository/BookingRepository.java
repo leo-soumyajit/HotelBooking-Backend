@@ -2,6 +2,7 @@ package com.soumyajit.HotelBooking.repository;
 
 import com.soumyajit.HotelBooking.entities.Booking;
 import com.soumyajit.HotelBooking.entities.Hotel;
+import com.soumyajit.HotelBooking.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -18,4 +19,6 @@ public interface BookingRepository extends JpaRepository<Booking,Long> {
 
     List<Booking> findByHotelAndCreatedAtBetween(Hotel hotel
     , LocalDateTime startDate , LocalDateTime endDate);
+
+    List<Booking> findByUser(User user);
 }

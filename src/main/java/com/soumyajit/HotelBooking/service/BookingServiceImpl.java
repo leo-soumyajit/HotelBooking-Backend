@@ -249,6 +249,7 @@ public class BookingServiceImpl implements BookingService{
     }
 
     @Override
+    @Transactional
     public List<BookingDTOS> getAllBookings(Long hotelId) {
         Hotel hotel = hotelRepository.findById(hotelId)
                 .orElseThrow(()->new ResourceNotFound("Hotel not found with id "+hotelId));
@@ -256,9 +257,11 @@ public class BookingServiceImpl implements BookingService{
         log.info("Getting all bookings of the Hotel with Id: {}",hotelId);
 
         User user = getCurrentUser();
-        if (!user.equals(hotel.getOwner())){
+        if (!user.getId().equals(hotel.getOwner().getId())){
             throw new UnAuthorizedException("Hotel does not belong to this user with id: "+hotelId);
         }
+
+        log.info("User is owns this hotel");
 
         List<Booking> bookings = bookingRepository.findByHotel(hotel);
 
@@ -266,10 +269,6 @@ public class BookingServiceImpl implements BookingService{
                 .map(booking ->
                     modelMapper.map(booking,BookingDTOS.class))
                     .collect(Collectors.toList());
-
-
-
-
 
     }
 
@@ -281,7 +280,7 @@ public class BookingServiceImpl implements BookingService{
         log.info("Getting all Reports of the Hotel with Id: {}",hotelId);
 
         User user = getCurrentUser();
-        if (!user.equals(hotel.getOwner())){
+        if (!user.getId().equals(hotel.getOwner().getId())){
             throw new UnAuthorizedException("Hotel does not belong to this user with id: "+hotelId);
         }
 
@@ -307,16 +306,14 @@ public class BookingServiceImpl implements BookingService{
         return new HotelReportsDTOS(totalConfirmedBooking,totalRevenueConfirmedBooking,avgRevenue);
     }
 
-
-
-
-
-
-
-
-
-
-
+    @Override
+    public List<BookingDTOS> getAllMyBookings() {
+        User user = getCurrentUser();
+        List<Booking> bookings =  bookingRepository.findByUser(user);
+        return bookings.stream()
+                .map(booking -> modelMapper.map(booking,BookingDTOS.class))
+                .collect(Collectors.toList());
+    }
 
 
     private boolean hasBookingExpired(Booking booking){

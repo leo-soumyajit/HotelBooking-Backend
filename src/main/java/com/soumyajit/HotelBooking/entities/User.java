@@ -1,6 +1,7 @@
 package com.soumyajit.HotelBooking.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.soumyajit.HotelBooking.entities.Enums.Gender;
 import com.soumyajit.HotelBooking.entities.Enums.Roles;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -10,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,9 +33,15 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String name;
 
+    private LocalDate dateOfBirth;
+
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+
     @Column(nullable = false,unique = true)
     private String email;
 
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
 

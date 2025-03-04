@@ -1,5 +1,6 @@
 package com.soumyajit.HotelBooking.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.soumyajit.HotelBooking.entities.Enums.BookingStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,10 +23,12 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id")
     private Room room;
@@ -56,6 +59,7 @@ public class Booking {
     @Enumerated(EnumType.STRING)
     private BookingStatus bookingStatus;
 
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "booking_guest",
     joinColumns = @JoinColumn(name = "booking_id")

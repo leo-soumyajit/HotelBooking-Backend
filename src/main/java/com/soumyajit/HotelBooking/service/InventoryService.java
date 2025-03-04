@@ -1,8 +1,6 @@
 package com.soumyajit.HotelBooking.service;
 
-import com.soumyajit.HotelBooking.dtos.HotelDTOS;
-import com.soumyajit.HotelBooking.dtos.HotelPriceDTO;
-import com.soumyajit.HotelBooking.dtos.HotelSearchRequest;
+import com.soumyajit.HotelBooking.dtos.*;
 import com.soumyajit.HotelBooking.entities.Room;
 import org.springframework.data.domain.Page;
 
@@ -13,4 +11,8 @@ public interface InventoryService {
     void deleteAllInventories(Room room);
 
     Page<HotelPriceDTO> searchHotels(HotelSearchRequest hotelSearchRequest);
+
+    List<InventoryDTOS> getAllInventoryByRoom(Long roomId);
+
+    void updateInventory(Long roomId, UpdateInventoryRequestDTO updateInventoryRequestDTO);
 }

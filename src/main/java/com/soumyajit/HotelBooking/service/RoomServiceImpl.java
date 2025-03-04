@@ -104,7 +104,7 @@ public class RoomServiceImpl implements RoomService{
                 .orElseThrow(()->new ResourceNotFound("Hotel with this hotelId not found"+hotelId));
 
         User user = getCurrentUser();
-        if(!user.equals(hotel.getOwner())){     //if the Admin isn't won the hotel if we don't put this any admin can access this and can update this
+        if(!user.getId().equals(hotel.getOwner().getId())){     //if the Admin isn't won the hotel if we don't put this any admin can access this and can update this
             throw new UnAuthorizedException("This user doesn't won this hotel with id: "+hotelId);
         }
         Room room = roomRepository.findById(roomId)

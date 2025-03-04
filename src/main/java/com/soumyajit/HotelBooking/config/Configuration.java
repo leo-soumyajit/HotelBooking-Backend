@@ -11,6 +11,4 @@ public class Configuration {
     ModelMapper getBean(){
         return new ModelMapper();
     }
-
-
 }

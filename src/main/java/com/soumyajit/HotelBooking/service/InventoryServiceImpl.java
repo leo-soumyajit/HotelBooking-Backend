@@ -1,9 +1,14 @@
 package com.soumyajit.HotelBooking.service;
 
+import com.soumyajit.HotelBooking.Exception.ResourceNotFound;
+import com.soumyajit.HotelBooking.Exception.UnAuthorizedException;
 import com.soumyajit.HotelBooking.dtos.HotelPriceDTO;
 import com.soumyajit.HotelBooking.dtos.HotelSearchRequest;
+import com.soumyajit.HotelBooking.dtos.InventoryDTOS;
+import com.soumyajit.HotelBooking.dtos.UpdateInventoryRequestDTO;
 import com.soumyajit.HotelBooking.entities.Inventory;
 import com.soumyajit.HotelBooking.entities.Room;
+import com.soumyajit.HotelBooking.entities.User;
 import com.soumyajit.HotelBooking.repository.HotelMinPriceRepository;
 import com.soumyajit.HotelBooking.repository.InventoryRepository;
 import com.soumyajit.HotelBooking.repository.RoomRepository;
@@ -14,10 +19,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.soumyajit.HotelBooking.util.AppUtils.getCurrentUser;
 
 @Service
 @RequiredArgsConstructor
@@ -72,5 +82,45 @@ public class InventoryServiceImpl implements InventoryService{
                         hotelSearchRequest.getRoomsCount(),dateCount,pageable
                 );
         return hotelPage;
+    }
+
+    @Override
+    public List<InventoryDTOS> getAllInventoryByRoom(Long roomId) {
+        log.info("Getting all Inventory of a room with roomId : {}",roomId);
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(()->new ResourceNotFound("Room with this Id : "+roomId+"Not found"));
+
+        User user = getCurrentUser();
+        if (!user.getId().equals(room.getHotel().getOwner().getId())){
+            throw new UnAuthorizedException("This hotel is not belongs to this user : "+user.getUsername());
+        }
+        List<Inventory> inventoryList = inventoryRepository.findByRoomOrderByDate(room);
+        return inventoryList.stream()
+                .map(inventory -> modelMapper.map(inventory,InventoryDTOS.class))
+                .collect(Collectors.toList());
+
+    }
+
+
+    @Transactional
+    @Override
+    public void updateInventory(Long roomId, UpdateInventoryRequestDTO updateInventoryRequestDTO) {
+        log.info("Updating Inventory of a room with roomId in a Given DateRange: {}",roomId);
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(()->new ResourceNotFound("Room with this Id : "+roomId+"Not found"));
+
+        User user = getCurrentUser();
+        if (!user.getId().equals(room.getHotel().getOwner().getId())){
+            throw new UnAuthorizedException("This hotel is not belongs to this user : "+user.getUsername());
+        }
+
+        inventoryRepository.getInventoryAndLockBeforeUpdate(roomId,updateInventoryRequestDTO.getStartDate(),
+                updateInventoryRequestDTO.getEndDate());
+
+
+        inventoryRepository.updateInventory(roomId,updateInventoryRequestDTO.getStartDate(),
+                updateInventoryRequestDTO.getEndDate(),updateInventoryRequestDTO.getSurgeFactor(),
+                updateInventoryRequestDTO.getClosed());
+
     }
 }

@@ -48,7 +48,7 @@ public class Hotel {
     @Column(nullable = false)
     private Boolean isActive;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false,fetch = FetchType.EAGER)
     private User owner;
 
 }
