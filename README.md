@@ -82,8 +82,9 @@ https://hotelbooking-service.onrender.com/api/v1/
 
 🐦 Try Endpoints in Postman:
 🔗 with https://hotelbooking-service.onrender.com/api/v1/
+🌐 Postman API workspace:
 ```bash
-🌐 Postman API workspace : https://www.postman.com/newsly-0222/workspace/hotel-booking-backend/collection/39002667-020dd3ae-aa23-4a38-93f2-aba4eebb3e93?action=share&source=copy-link&creator=39002667
+https://www.postman.com/newsly-0222/workspace/hotel-booking-backend/collection/39002667-020dd3ae-aa23-4a38-93f2-aba4eebb3e93?action=share&source=copy-link&creator=39002667
 ```
 
 🧪 Run Locally
