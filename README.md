@@ -75,9 +75,9 @@ This backend is hosted live on Render using Docker.
 📍 API Base URL:
 https://hotelbooking-service.onrender.com/api/v1/
 
-Try Endpoints in Postman:
+🐦 Try Endpoints in Postman:
 with https://hotelbooking-service.onrender.com/api/v1/
-https://newsly-0222.postman.co/workspace/My-Workspace~8a29e63c-8e4a-451c-88bf-3d8a9eee5e76/collection/39002667-020dd3ae-aa23-4a38-93f2-aba4eebb3e93?action=share&source=copy-link&creator=39002667
+🔗 https://www.postman.com/newsly-0222/workspace/hotel-booking-backend/collection/39002667-020dd3ae-aa23-4a38-93f2-aba4eebb3e93?action=share&source=copy-link&creator=39002667
 
 🧪 Run Locally
 Clone the repository:
