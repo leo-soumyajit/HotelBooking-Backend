@@ -61,12 +61,12 @@ src/
 
 
 
-
-## 🐳 Docker
-### 🔧 Build the Docker Image
 ```bash
+## 🐳 Docker
 pull the public image from Docker Hub:
 docker pull soumyajit2005/hotelbooking-service:v0.0.1
+```
+
 
 docker run -p 8000:8000 soumyajit2005/hotelbooking-service:v0.0.1
 🌐 Deployment
@@ -75,12 +75,13 @@ This backend is hosted live on Render using Docker.
 📍 API Base URL:
 https://hotelbooking-service.onrender.com/api/v1/
 
+```bash
 🐦 Try Endpoints in Postman:
 🔗 with https://hotelbooking-service.onrender.com/api/v1/
 🌐 Postman API workspace : https://www.postman.com/newsly-0222/workspace/hotel-booking-backend/collection/39002667-020dd3ae-aa23-4a38-93f2-aba4eebb3e93?action=share&source=copy-link&creator=39002667
-
+```
+```bash
 🧪 Run Locally
 Clone the repository:
-
 git clone https://github.com/yourusername/hotel-booking-backend.git
 cd hotel-booking-backend
