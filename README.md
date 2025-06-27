@@ -38,6 +38,7 @@ A scalable and secure backend solution for hotel booking and management, built u
 
 ## 📁 Project Structure
 
+```bash
 src/
 ├── main/
 │ ├── java/com/soumyajit/HotelBooking/
@@ -58,7 +59,7 @@ src/
 ├── test/
 ├── Dockerfile
 └── target/
-
+```
 
 
 
@@ -90,5 +91,5 @@ https://www.postman.com/newsly-0222/workspace/hotel-booking-backend/collection/3
 🧪 Run Locally
 Clone the repository:
 ```bash
-git clone https://github.com/yourusername/hotel-booking-backend.git
-cd hotel-booking-backend
+git clone https://github.com/leo-soumyajit/HotelBooking-Backend.git
+cd HotelBooking-Backend
