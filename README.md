@@ -99,9 +99,23 @@ https://hotelbooking-service.onrender.com/api/v1/
 
 ---
 
+## ⚙️ Setup & Run Locally
 
-🧪 Run Locally
-Clone the repository:
+### 📦 Clone the Repository
+
 ```bash
 git clone https://github.com/leo-soumyajit/HotelBooking-Backend.git
 cd HotelBooking-Backend
+```
+🛠 Configure Database Connection
+Edit the application.properties file:
+```bash
+spring.datasource.url=jdbc:postgresql://localhost:5432/<your_db_name>
+spring.datasource.username=your_db_username
+spring.datasource.password=your_db_password
+```
+
+▶ Run the Application
+```bash
+./mvnw spring-boot:run
+```
