@@ -1,4 +1,4 @@
- 🏨 Hotel Booking & Management Backend System
+## 🏨 Hotel Booking & Management Backend System
 
 A scalable and secure backend solution for hotel booking and management, built using **Spring Boot**, integrated with **Stripe** for payments, and containerized with **Docker** for easy deployment. The application is hosted on **Render** and supports robust admin and user functionalities.
 
@@ -33,6 +33,18 @@ A scalable and secure backend solution for hotel booking and management, built u
 | **Payment**        | Stripe API                               |
 | **Deployment**     | Docker, Render                           |
 | **API Docs**       | Postman / Swagger                        |
+
+
+![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-4169E1?style=for-the-badge&logo=docker&logoColor=white)
+![Maven](https://img.shields.io/badge/Maven-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
+![Swagger](https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black)
+![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white)
+![Stripe](https://img.shields.io/badge/Stripe-635BFF?style=for-the-badge&logo=stripe&logoColor=white)
+![IntelliJ IDEA](https://img.shields.io/badge/IntelliJ_IDEA-000000?style=for-the-badge&logo=intellij-idea&logoColor=white)
 
 ---
 
