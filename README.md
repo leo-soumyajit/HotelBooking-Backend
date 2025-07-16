@@ -7,12 +7,17 @@ A scalable and secure backend solution for hotel booking and management, built u
 
 ---
 
-<div align="center">
-  <img src="https://forthebadge.com/images/badges/built-with-love.svg" />&nbsp;
-  <img src="https://forthebadge.com/images/badges/uses-brains.svg" />&nbsp;
-  <img src="https://forthebadge.com/images/badges/powered-by-responsibility.svg"/>
-</div>
-<br/>
+<p align="center">
+  <img src="https://img.shields.io/badge/Fueled%20by-Java-007396?style=for-the-badge&logo=java&logoColor=white" />
+  <img src="https://img.shields.io/badge/Tested%20in-Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white" />
+  <img src="https://img.shields.io/badge/Crafted%20with-Googling%20Skills-orange?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Tested%20by-Hope%20and%20Luck-yellowgreen?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Code%20Status-Cautiously%20Optimistic-lightgrey?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Breaks%20on-Mondays%20Only-red?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Backend%20Fueled%20by-Keyboard%20Smashing-informational?style=for-the-badge" />
+</p>
+
+
 
 ---
 
